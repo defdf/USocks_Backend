@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const config = require("../config/main");
 
 // Get all users
 router.get('/', cors(), (req, res) => {
@@ -10,7 +13,7 @@ router.get('/', cors(), (req, res) => {
             'username',
             'email',
             //'name',
-           // 'isAdmin'
+            // 'isAdmin'
         ]
     })
         .then(allUsers => {
@@ -42,5 +45,120 @@ router.get('/:id', cors(), (req, res) => {
         .catch(err => console.log(err));
 });
 
+// Login user
+/*
+    Takes JSON body of:
+    usernameOrEmail: string
+    password: string
+
+    =======================
+    Returns:
+    success: boolean
+    token: string
+ */
+router.post('/login', cors(), (req, res) => {
+    User.findOne({
+        where: {
+            $or: [
+                {username: {$eq: req.body.usernameOrPassword}},
+                {email: {$eq: req.body.usernameOrPassword}}
+            ]
+        }
+    }).then(user => {
+        if (!user) {
+            res.status(404).json({
+                message: 'A user with provided username or email does not exist'
+            })
+        }
+        let isAuthorised = bcrypt.compareSync(req.body.password, user.password);
+        if (isAuthorised) {
+            let token = jwt.sign({
+                    username: user.username,
+                    email: user.email
+                },
+                config.secretKey, {
+                    expiresIn: 1814400 //?????????????????
+                });
+            res.status(200).json({
+                success: true,
+                token: token
+            })
+        } else {
+            return res.status(403).json({
+                message: 'Unauthorized.'
+            })
+        }
+    }).catch(error => {
+        res.status(500).json({
+            message: 'Something went wrong.',
+            error: error
+        })
+    });
+});
+
+// Create user
+/*
+    Takes json body of minimum:
+    username: string,
+    email: string,
+    password: string
+
+    ===========================
+    Returns User JSON object
+ */
+router.post('/', cors(), (req, res) => {
+    const data = req.body;
+    console.log(data);
+
+    if (!data.username ||
+        !data.email ||
+        !data.password) {
+        return res.status(404).json({
+            message: 'Incomplete data. Please ensure all required fields are filled:' +
+                'username, email and password.',
+            receivedData: data
+        })
+    } else {
+        // todo
+        User.findOrCreate({
+            where: {
+                $or: [
+                    {username: {$eq: data.username}},
+                    {email: {$eq: data.email}}
+                ]
+            },
+            defaults: {
+                username: data.username,
+                email: data.email,
+                password: hashPassword(data.password)
+            }
+        }).then(result=>{
+            let user=result[0],
+                created=result[1];
+
+            console.log('user: '+user);
+            console.log('created: '+created);
+            if (!created){
+                return res.status(400).json({
+                    message: 'Username or email already in use.'
+                })
+            }
+            //user.password=null;
+            return res.status(200).json(user);
+        }).catch(error=>{
+            return res.status(500).json({
+                message: 'something went wrong.',
+                error: error
+            })
+        })
+    }
+});
+
+function hashPassword(password){
+    let salt=bcrypt.genSaltSync(10);
+    let hash=bcrypt.hashSync(password, salt);
+    console.log(hash);
+    return hash;
+}
 
 module.exports = router;
