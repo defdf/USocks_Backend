@@ -9,8 +9,8 @@ router.get('/', cors(), (req, res) => {
         attributes: [
             'username',
             'email',
-            'name',
-            'isAdmin'
+            //'name',
+           // 'isAdmin'
         ]
     })
         .then(allUsers => {
@@ -26,8 +26,8 @@ router.get('/:id', cors(), (req, res) => {
         attributes: [
             'username',
             'email',
-            'name',
-            'isAdmin'
+            //'name',
+            //'isAdmin'
         ]
     })
         .then(appUser => {
@@ -41,5 +41,6 @@ router.get('/:id', cors(), (req, res) => {
         })
         .catch(err => console.log(err));
 });
+
 
 module.exports = router;

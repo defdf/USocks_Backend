@@ -14,12 +14,12 @@ const User = db.define('User', {
     password: {
         type: Sequelize.STRING
     },
-    name: {
+    /*name: {
         type: Sequelize.STRING
     },
     isAdmin: {
         type: Sequelize.BOOLEAN
-    },
+    },*/
 }, {
     freezeTableName: true,
     timestamps: false
