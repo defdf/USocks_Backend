@@ -12,9 +12,7 @@ app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
-app.use('/', indexRouter);
 app.use('/user', userRouter);
 
 db.sync({force: false})
