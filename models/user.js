@@ -3,18 +3,18 @@ const Sequelize = require("sequelize");
 
 const User = db.define('user', {
     username: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(32),
         unique: true,
         primaryKey: true,
         allowNull: false,
     },
     email: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(254),
         unique: true,
         allowNull: false,
     },
     password: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(128),
         allowNull: false,
     },
     /*name: {

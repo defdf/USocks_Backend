@@ -6,8 +6,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const config = require("../config/main");
 const Op = require('sequelize').Op;
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
 const passport = require('passport');
 
 // Get all users
@@ -60,7 +58,7 @@ router.get('/:id', cors(), (req, res) => {
     success: boolean
     token: string
  */
-router.post('/login', cors(), jsonParser, (req, res) => {
+router.post('/login', cors(), (req, res) => {
     User.findOne({
         where: {
             [Op.or]: [
@@ -81,7 +79,7 @@ router.post('/login', cors(), jsonParser, (req, res) => {
                     email: user.email
                 },
                 config.secretKey, {
-                    expiresIn: 1814400 //?????????????????
+                    expiresIn: 1814400
                 });
             return res.status(200).json({
                 success: true,
@@ -110,7 +108,7 @@ router.post('/login', cors(), jsonParser, (req, res) => {
     ===========================
     Returns User JSON object
  */
-router.post('/', cors(), jsonParser, (req, res) => {
+router.post('/', cors(), (req, res) => {
     const data = req.body;
     console.log(data);
 
@@ -154,7 +152,7 @@ router.post('/', cors(), jsonParser, (req, res) => {
     }
 });
 
-// Update a User
+// todo => Update a User
 
 // Delete a User (ADMIN ONLY)
 /*
@@ -163,6 +161,53 @@ router.post('/', cors(), jsonParser, (req, res) => {
     ==========
     REQUESTS Authorization
  */
+router.delete('/:id', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
+    let snippedAuth = req.get('Authorization').replace("Bearer ", "");
+    let decodedAuth = jwt.verify(snippedAuth, config.secretKey);
+    let isUser = decodedAuth.username == req.params.id;
+    //let isAdmin = decodedAuth.isAdmin;
+    //if (isAdmin || isUser) {
+    if (isUser) {
+        User.findOne({
+            where: {
+                username: req.params.id
+            }
+        }).then(userToBeDeleted => {
+            if (userToBeDeleted) {
+                // todo => delete user related data
+                console.log('Deleting user');
+                User.destroy({
+                    where: {
+                        username: userToBeDeleted.username
+                    }
+                }).then(() => {
+                    return res.status(200).json({
+                        message: 'User has been deleted'
+                    })
+                }).catch(err => {
+                    return res.status(500).json({
+                        message: 'User could not be deleted.',
+                        error: err
+                    })
+                })
+            } else {
+                return res.status(404).json({
+                    message: 'User could not be found',
+                })
+            }
+        }).catch(err => {
+            return res.status(500).json({
+                message: "Something went wrong",
+                error: err
+            })
+        })
+    } else {
+        return res.status(401).json({
+            message: 'Unauthorized. You cannot delete another user unless you are a system admin.'
+        })
+    }
+})
+;
 
 function hashPassword(password) {
     let salt = bcrypt.genSaltSync(10);
