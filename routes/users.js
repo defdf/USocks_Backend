@@ -5,6 +5,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const config = require("../config/main");
+const Op = require('sequelize').Op;
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
+const passport = require('passport');
 
 // Get all users
 router.get('/', cors(), (req, res) => {
@@ -56,17 +60,17 @@ router.get('/:id', cors(), (req, res) => {
     success: boolean
     token: string
  */
-router.post('/login', cors(), (req, res) => {
+router.post('/login', cors(), jsonParser, (req, res) => {
     User.findOne({
         where: {
-            $or: [
-                {username: {$eq: req.body.usernameOrPassword}},
-                {email: {$eq: req.body.usernameOrPassword}}
+            [Op.or]: [
+                {username: req.body.usernameOrPassword},
+                {email: req.body.usernameOrPassword}
             ]
         }
     }).then(user => {
         if (!user) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: 'A user with provided username or email does not exist'
             })
         }
@@ -79,7 +83,7 @@ router.post('/login', cors(), (req, res) => {
                 config.secretKey, {
                     expiresIn: 1814400 //?????????????????
                 });
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 token: token
             })
@@ -106,7 +110,7 @@ router.post('/login', cors(), (req, res) => {
     ===========================
     Returns User JSON object
  */
-router.post('/', cors(), (req, res) => {
+router.post('/', cors(), jsonParser, (req, res) => {
     const data = req.body;
     console.log(data);
 
@@ -119,12 +123,11 @@ router.post('/', cors(), (req, res) => {
             receivedData: data
         })
     } else {
-        // todo
         User.findOrCreate({
             where: {
-                $or: [
-                    {username: {$eq: data.username}},
-                    {email: {$eq: data.email}}
+                [Op.or]: [
+                    {username: data.username},
+                    {email: data.email}
                 ]
             },
             defaults: {
@@ -132,20 +135,17 @@ router.post('/', cors(), (req, res) => {
                 email: data.email,
                 password: hashPassword(data.password)
             }
-        }).then(result=>{
-            let user=result[0],
-                created=result[1];
+        }).then(result => {
+            let user = result[0],
+                created = result[1];
 
-            console.log('user: '+user);
-            console.log('created: '+created);
-            if (!created){
+            if (!created) {
                 return res.status(400).json({
                     message: 'Username or email already in use.'
                 })
             }
-            //user.password=null;
             return res.status(200).json(user);
-        }).catch(error=>{
+        }).catch(error => {
             return res.status(500).json({
                 message: 'something went wrong.',
                 error: error
@@ -154,9 +154,19 @@ router.post('/', cors(), (req, res) => {
     }
 });
 
-function hashPassword(password){
-    let salt=bcrypt.genSaltSync(10);
-    let hash=bcrypt.hashSync(password, salt);
+// Update a User
+
+// Delete a User (ADMIN ONLY)
+/*
+    Takes JSON body of:
+        username: string
+    ==========
+    REQUESTS Authorization
+ */
+
+function hashPassword(password) {
+    let salt = bcrypt.genSaltSync(10);
+    let hash = bcrypt.hashSync(password, salt);
     console.log(hash);
     return hash;
 }

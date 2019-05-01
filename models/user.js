@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 
 const User = db.define('user', {
     username: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING,
         unique: true,
         primaryKey: true,
         allowNull: false,
