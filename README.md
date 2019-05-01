@@ -1,5 +1,4 @@
-# USocks_Backend
-Express API for USocks
+# Express API for USocks
 
 Get all users
 
