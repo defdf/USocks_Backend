@@ -5,6 +5,7 @@ Get all users
 Get one user
 
 Login user:
+    =======================
     Takes JSON body of:
     usernameOrEmail: string
     password: string
@@ -15,6 +16,7 @@ Login user:
     token: string
 
 Create user:
+    ===========================
     Takes json body of minimum:
     username: string,
     email: string,
