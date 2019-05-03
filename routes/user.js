@@ -206,8 +206,7 @@ router.delete('/:id', cors(), passport.authenticate('jwt', {session: false}), (r
             message: 'Unauthorized. You cannot delete another user unless you are a system admin.'
         })
     }
-})
-;
+});
 
 function hashPassword(password) {
     let salt = bcrypt.genSaltSync(10);
