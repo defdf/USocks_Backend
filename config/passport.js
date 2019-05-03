@@ -10,7 +10,7 @@ const jwtOptions = {
     secretOrKey: config.secretKey
 };
 
-const jwtStratedy = new JwtStrategy(jwtOptions, function (jwtPayload, done) {
+const jwtStrategy = new JwtStrategy(jwtOptions, function (jwtPayload, done) {
     User.findOne({
         where: {username: jwtPayload.username}
     }).then(appUser => {
@@ -24,5 +24,5 @@ const jwtStratedy = new JwtStrategy(jwtOptions, function (jwtPayload, done) {
     })
 });
 
-passport.use(jwtStratedy);
+passport.use(jwtStrategy);
 module.exports = passport;

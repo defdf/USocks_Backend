@@ -11,8 +11,12 @@ const Item_Size = db.define('item_size', {
         allowNull: false
     },*/
     qty: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
+}, {
+    freezeTableName: true,
+    timestamp: false
 });
 
-module.exports=Item_Size;
+module.exports = Item_Size;

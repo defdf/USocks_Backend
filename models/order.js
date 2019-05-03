@@ -14,18 +14,15 @@ const Order = db.define('order', {
          },*/
         dateTime: {
             type: Sequelize.DATE,
-            allowNull:
-                false
+            allowNull: false
         },
         totalPrice: {
             type: Sequelize.INTEGER,
-            allowNull:
-                false
+            allowNull: false
         }
     }, {
         freezeTableName: true,
-        timestamp:
-            false
+        timestamp: false
     }
 );
 

@@ -8,6 +8,9 @@ const Size = db.define('size', {
         primaryKey: true,
         allowNull: false
     }
+},{
+    freezeTableName: true,
+    timestamp: false
 });
 
 module.exports = Size;

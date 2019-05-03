@@ -14,6 +14,8 @@ app.use(logger('dev'));
 
 const userRouter = require('./routes/user');
 app.use('/user', userRouter);
+const sockRouter = require('./routes/sock');
+app.use('sock', sockRouter);
 
 db.sync({force: false})
     .then(() => {

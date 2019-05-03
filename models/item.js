@@ -4,10 +4,8 @@ const Sequelize = require('sequelize');
 const Item = db.define('item', {
     id: {
         type: Sequelize.INTEGER,
-        unique: true,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
     },
     name: {
         type: Sequelize.STRING(255),
@@ -19,10 +17,6 @@ const Item = db.define('item', {
     },
     price: {
         type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    category: {
-        type: Sequelize.STRING(45),
         allowNull: false
     },
     description: {
