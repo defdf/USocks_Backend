@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const Sock = require('../models/item');
-const Category = require('../models/category');
+const Sock = require('../models').Item;
+const Category = require('../models').Category;
 
 // Get all Socks
 router.get('/', cors(), (req, res) => {
@@ -11,7 +11,8 @@ router.get('/', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'imageURL',
+            'image_url',
+            'description'
         ]
     })
         .then(allSocks => {
@@ -27,7 +28,7 @@ router.get('/:id', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'imageURL',
+            'image_url',
             'description'
         ]
     })
@@ -39,20 +40,12 @@ router.get('/:id', cors(), (req, res) => {
 
 // Get all Socks of Men
 router.get('/men', cors(), (req, res) => {
-    Sock.findAll({
-        include: [{
-            model: Category,
-            where: {category: 'men'}
-        }],
-        attributes: [
-            'id',
-            'name',
-            'price',
-            'imageURL'
-        ]
-    })
-        .then(menSocks => {
-            return res.status(200).json(menSocks);
+    Category.findByPk('men')
+        .then(men => {
+            men.getItems()
+                .then(menSocks => {
+                    return res.status(200).json(menSocks);
+                })
         })
         .catch(err => console.log(err));
 });
@@ -68,7 +61,7 @@ router.get('/women', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'imageURL'
+            'image_url'
         ]
     })
         .then(womenSocks => {
@@ -88,7 +81,7 @@ router.get('/kids', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'imageURL'
+            'image_url'
         ]
     })
         .then(kidsSocks => {
@@ -108,7 +101,7 @@ router.get('/gifts', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'imageURL'
+            'image_url'
         ]
     })
         .then(giftsSocks => {
@@ -129,7 +122,7 @@ router.get('/search/:query', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'imageURL'
+            'image_url'
         ]
     })
         .then(giftsSocks => {
@@ -138,4 +131,4 @@ router.get('/search/:query', cors(), (req, res) => {
         .catch(err => console.log(err));
 });
 
-module.exports = Sock;
+module.exports = router;

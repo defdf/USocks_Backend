@@ -13,9 +13,12 @@ app.use(bodyParser.json());
 app.use(logger('dev'));
 
 const userRouter = require('./routes/user');
-app.use('/user', userRouter);
 const sockRouter = require('./routes/sock');
-app.use('sock', sockRouter);
+const sizeRouter = require('./routes/size');
+
+app.use('/user', userRouter);
+app.use('/sock', sockRouter);
+app.use('/size', sizeRouter);
 
 db.sync({force: false})
     .then(() => {

@@ -26,6 +26,11 @@ const User = db.define('user', {
 }, {
     freezeTableName: true,
     timestamps: false,
+    underScored: true
 });
+
+User.associate = function (models) {
+    User.hasMany(models.Order, {foreignKey: 'user_username'});
+};
 
 module.exports = User;

@@ -22,8 +22,14 @@ const Order = db.define('order', {
         }
     }, {
         freezeTableName: true,
-        timestamp: false
+        timestamps: false,
+        underscored: true
     }
 );
+
+Order.associate = function (models) {
+    Order.belongsTo(models.User, {foreignKey: 'user_username'});
+    Order.belongsToMany(models.Item, {through: 'order_item', foreignKey: 'order_id'});
+};
 
 module.exports = Order;

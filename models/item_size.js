@@ -16,7 +16,12 @@ const Item_Size = db.define('item_size', {
     }
 }, {
     freezeTableName: true,
-    timestamp: false
+    timestamps: false
 });
+
+Item_Size.associate = function (models) {
+    Item_Size.belongsTo(models.Size, {foreignKey: 'size_name'});
+    Item_Size.belongsTo(models.Item, {foreignKey: 'item_id'});
+};
 
 module.exports = Item_Size;

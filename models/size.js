@@ -10,7 +10,12 @@ const Size = db.define('size', {
     }
 },{
     freezeTableName: true,
-    timestamp: false
+    timestamps: false,
+    underscored: true
 });
+
+Size.associate= function (models) {
+    Size.belongsToMany(models.Item, {through: 'item_size', foreignKey: 'size_name'});
+};
 
 module.exports = Size;

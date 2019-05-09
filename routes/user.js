@@ -1,12 +1,13 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const config = require("../config/main");
+const User = require('../models').User;
 const Op = require('sequelize').Op;
 const passport = require('passport');
+//const Order = require('../models').Order;
 
 // Get all users
 router.get('/', cors(), (req, res) => {
@@ -20,6 +21,26 @@ router.get('/', cors(), (req, res) => {
     })
         .then(allUsers => {
             return res.status(200).json(allUsers);
+        })
+        .catch(err => console.log(err));
+});
+
+
+// test
+router.get('/user1orders', cors(), (req, res) => {
+    User.findByPk('user1'
+    )
+        .then(user1 => {
+            user1.getOrders()
+                .then(orders => {
+                    return res.status(200).json(orders);
+                })
+                .catch(err => {
+                    return res.status(404).json({
+                        message: 'getOrders() did not work'
+                    })
+                })
+
         })
         .catch(err => console.log(err));
 });
@@ -163,7 +184,7 @@ router.post('/', cors(), (req, res) => {
  */
 router.delete('/:id', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     let snippedAuth = req.get('Authorization').replace("Bearer ", "");
-    let decodedAuth = jwt.verify(snippedAuth, config.secretKey);
+    let decodedAuth = jwt.verify(snippedAuth, process.env.SECRET_KEY);
     let isUser = decodedAuth.username == req.params.id;
     //let isAdmin = decodedAuth.isAdmin;
     //if (isAdmin || isUser) {
@@ -211,7 +232,6 @@ router.delete('/:id', cors(), passport.authenticate('jwt', {session: false}), (r
 function hashPassword(password) {
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(password, salt);
-    console.log(hash);
     return hash;
 }
 
