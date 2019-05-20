@@ -7,7 +7,8 @@
         Takes JSON body of:    
         usernameOrEmail: string    
         password: string  
-        * Returns token: string
+        
+        Returns token: string
 - [x] Create User    
         Takes JSON body of minimun:    
         username: string,   
@@ -17,27 +18,27 @@
         Returns User JSON object    
 - [x] Update User        
         REQUIRES Authorization header with bearer token      
-        Takes json body of:      
+        Takes JSON body of:      
         updateField: <option>    
           options = email: string,    
                     firstName: string,      
                     lastName: string      
           newValue: string   
           
-        Returns User json object     
+        Returns User JSON object     
 - [x]  Delete a User    
-    REQUIRES Authorization header with bearer token  
+        REQUIRES Authorization header with bearer token  
 
 #### sock APIs
 - [x] Get all socks
 - [x] Get single sock
 - [x] Upload a sock  
-        - Takes json body of minimum:  
-          - name: string,  
-          - price: string,  
-          - image_url: string  
+        Takes JSON body of minimum:  
+        name: string,  
+        price: string,  
+        image_url: string  
   
-        - Returns Sock JSON object    
+        Returns Sock JSON object    
 - [ ] Get all socks of men  
 - [ ] Get all socks of women  
 - [ ] Get all socks of kids  
@@ -49,7 +50,9 @@
 - [x] Get single size    
 - [x] Create a size  
         Takes JSON body of:  
-        name: string  
+        name: string
+        
+        Returns name: string
 - [x] Delete a size  
 
 #### category APIs
@@ -58,4 +61,6 @@
 - [x] Create a category   
         Takes JSON body of:    
         name: string  
+        
+        Returns name: string
 - [x] Delete a category  
