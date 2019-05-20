@@ -1,11 +1,11 @@
 # Express API for USocks
 
 #### user APIs
--[x] Get all users
+- [x] Get all users
 
--[x] Get one user
+- [x] Get one user
 
--[x] Login user
+- [x] Login user
         Takes JSON body of:
         usernameOrEmail: string
         password: string
@@ -14,7 +14,7 @@
         Returns:
         token: string
         
--[x] Create User
+- [x] Create User
         Takes JSON body of minimun:
         username: string,
         email: string,
@@ -23,7 +23,7 @@
         ==========================
         Returns User JSON object
 
--[x] Update User
+-  [x] Update User
     REQUIRES Authorization header with bearer token
     Takes json body of:
         updateField: <option>
@@ -35,5 +35,5 @@
     ==============================
     Returns User json object
  
--[x]  Delete a User
+- [x]  Delete a User
     REQUIRES Authorization header with bearer token
