@@ -22,16 +22,17 @@
         ==========================  
         Returns User JSON object  
 
--  [x] Update User  
-        REQUIRES Authorization header with bearer token  
-         Takes json body of:  
-                updateField: <option>  
-                        options = email: string,  
-                                  firstName: string,  
-                                  lastName: string  
-                newValue: string  
-        ==============================
-        Returns User json object
+-  [x] Update User      
+         REQUIRES Authorization header with bearer token    
+         Takes json body of:    
+           updateField: <option>  
+                  options = email: string,  
+                            firstName: string,  
+                            lastName: string  
+           newValue: string  
+          
+        ==========================  
+        Returns User json object  
  
 - [x]  Delete a User  
     REQUIRES Authorization header with bearer token
