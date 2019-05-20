@@ -1,16 +1,36 @@
 {
   "name": "usocks-backend",
   "version": "0.0.0",
-  "private": true,
+  "description": "API backend for an e-commerce project",
+  "author": "Danfeng Wang",
+  "license": "ISC",
+  "main": "bin/index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "npm run build && nodemon dist/index.js",
+    "build": "babel bin -d dist",
+    "serve": "node dist/index.js",
+    "test": "mocha --require @babel/register"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.16.0",
-    "http-errors": "~1.6.2",
+    "bcrypt": "^3.0.6",
+    "body-parser": "latest",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11"
+    "mysql2": "^1.6.5",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "sequelize": "^5.8.5"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/register": "^7.4.4",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.19.0"
   }
 }
