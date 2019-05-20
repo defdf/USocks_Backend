@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models').User;
 const Op = require('sequelize').Op;
 const passport = require('passport');
-//const Order = require('../models').Order;
+const secretKey = process.env.SECRETKEY;
 
 // Get all users
 router.get('/', cors(), (req, res) => {
@@ -15,8 +15,8 @@ router.get('/', cors(), (req, res) => {
         attributes: [
             'username',
             'email',
-            //'name',
-            // 'isAdmin'
+            'firstName',
+            'lastName',
         ]
     })
         .then(allUsers => {
@@ -25,35 +25,15 @@ router.get('/', cors(), (req, res) => {
         .catch(err => console.log(err));
 });
 
-
-// test
-router.get('/user1orders', cors(), (req, res) => {
-    User.findByPk('user1'
-    )
-        .then(user1 => {
-            user1.getOrders()
-                .then(orders => {
-                    return res.status(200).json(orders);
-                })
-                .catch(err => {
-                    return res.status(404).json({
-                        message: 'getOrders() did not work'
-                    })
-                })
-
-        })
-        .catch(err => console.log(err));
-});
-
 // Get single user
-router.get('/:id', cors(), (req, res) => {
+router.get('/:username', cors(), (req, res) => {
     User.findOne({
-        where: {username: req.params.id},
+        where: {username: req.params.username},
         attributes: [
             'username',
             'email',
-            //'name',
-            //'isAdmin'
+            'firstName',
+            'lastName',
         ]
     })
         .then(appUser => {
@@ -65,7 +45,12 @@ router.get('/:id', cors(), (req, res) => {
                 })
             }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something is wrong find the user.',
+                error: err
+            })
+        });
 });
 
 // Login user
@@ -76,21 +61,20 @@ router.get('/:id', cors(), (req, res) => {
 
     =======================
     Returns:
-    success: boolean
     token: string
  */
 router.post('/login', cors(), (req, res) => {
     User.findOne({
         where: {
             [Op.or]: [
-                {username: req.body.usernameOrPassword},
-                {email: req.body.usernameOrPassword}
+                {username: req.body.usernameOrEmail},
+                {email: req.body.usernameOrEmail}
             ]
         }
     }).then(user => {
         if (!user) {
             return res.status(404).json({
-                message: 'A user with provided username or email does not exist'
+                message: 'A user with provided username or email does not exist.'
             })
         }
         let isAuthorised = bcrypt.compareSync(req.body.password, user.password);
@@ -99,11 +83,10 @@ router.post('/login', cors(), (req, res) => {
                     username: user.username,
                     email: user.email
                 },
-                config.secretKey, {
-                    expiresIn: 1814400
+                secretKey, {
+                    expiresIn: '7d'
                 });
             return res.status(200).json({
-                success: true,
                 token: token
             })
         } else {
@@ -124,6 +107,8 @@ router.post('/login', cors(), (req, res) => {
     Takes json body of minimum:
     username: string,
     email: string,
+    firstName: string,
+    lastName: string,
     password: string
 
     ===========================
@@ -131,14 +116,15 @@ router.post('/login', cors(), (req, res) => {
  */
 router.post('/', cors(), (req, res) => {
     const data = req.body;
-    console.log(data);
 
     if (!data.username ||
         !data.email ||
+        !data.firstName ||
+        !data.lastName ||
         !data.password) {
         return res.status(404).json({
             message: 'Incomplete data. Please ensure all required fields are filled:' +
-                'username, email and password.',
+                'username: string, email: string, firstName: string, lastName: string and password: string.',
             receivedData: data
         })
     } else {
@@ -152,6 +138,8 @@ router.post('/', cors(), (req, res) => {
             defaults: {
                 username: data.username,
                 email: data.email,
+                firstName: data.firstName,
+                lastName: data.lastName,
                 password: hashPassword(data.password)
             }
         }).then(result => {
@@ -163,7 +151,9 @@ router.post('/', cors(), (req, res) => {
                     message: 'Username or email already in use.'
                 })
             }
-            return res.status(200).json(user);
+            let returnUser = user;
+            returnUser.password = null;
+            return res.status(200).json(returnUser);
         }).catch(error => {
             return res.status(500).json({
                 message: 'something went wrong.',
@@ -173,66 +163,111 @@ router.post('/', cors(), (req, res) => {
     }
 });
 
-// todo => Update a User
-
-// Delete a User (ADMIN ONLY)
-/*
-    Takes JSON body of:
-        username: string
-    ==========
-    REQUESTS Authorization
- */
-router.delete('/:id', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
-    let snippedAuth = req.get('Authorization').replace("Bearer ", "");
-    let decodedAuth = jwt.verify(snippedAuth, process.env.SECRET_KEY);
-    let isUser = decodedAuth.username == req.params.id;
-    //let isAdmin = decodedAuth.isAdmin;
-    //if (isAdmin || isUser) {
-    if (isUser) {
-        User.findOne({
-            where: {
-                username: req.params.id
-            }
-        }).then(userToBeDeleted => {
-            if (userToBeDeleted) {
-                // todo => delete user related data
-                console.log('Deleting user');
-                User.destroy({
-                    where: {
-                        username: userToBeDeleted.username
-                    }
-                }).then(() => {
-                    return res.status(200).json({
-                        message: 'User has been deleted'
-                    })
-                }).catch(err => {
-                    return res.status(500).json({
-                        message: 'User could not be deleted.',
-                        error: err
-                    })
-                })
-            } else {
-                return res.status(404).json({
-                    message: 'User could not be found',
-                })
-            }
-        }).catch(err => {
-            return res.status(500).json({
-                message: "Something went wrong",
-                error: err
-            })
-        })
-    } else {
-        return res.status(401).json({
-            message: 'Unauthorized. You cannot delete another user unless you are a system admin.'
-        })
-    }
-});
-
 function hashPassword(password) {
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(password, salt);
     return hash;
 }
+
+/* Update User
+    REQUIRES Authorization header with bearer token
+    Takes json body of:
+        updateField: <option>
+            options =
+                email: string,
+                firstName: string,
+                lastName: string
+        newValue: string
+    Returns:
+        User json object
+ */
+router.put('/:username', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
+    User.findOne({
+        where: {
+            username: req.params.username
+        }
+    }).then(user => {
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found.'
+            })
+        }
+        let data = req.body;
+        if (!data.updateField ||
+            !data.newValue) {
+            return res.status(400).json({
+                message: 'Request body must contain updateField and newValue key value pair.' +
+                    'Accepted types: email: string, firstName: string, lastName: string.'
+            });
+        }
+        let updateField = data.updateField;
+        if (updateField === 'password') {
+            return res.status(400).json({
+                message: 'Call the relevant endpoints to change your password.'
+            })
+        }
+        let values = {[updateField]: data.newValue};
+        user.update(values)
+            .then(result => {
+                let updatedUser = result;
+                updatedUser.password = null;
+                res.status(200).json(updatedUser);
+            })
+            .catch(err => {
+                return res.status(500).json({
+                    message: 'There was an error updating this user.',
+                    error: err
+                });
+            });
+    })
+});
+
+// Delete a User
+/*
+    REQUESTS Authorization
+ */
+router.delete('/:username', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
+    let bearerHeader = req.get('Authorization');
+    let snippedAuth = bearerHeader.replace("Bearer ", "");
+    let decodedAuth = jwt.verify(snippedAuth, secretKey);
+    let isUser = decodedAuth.username == req.params.username;
+    if (isUser) {
+        User.findOne({
+            where: {
+                username: req.params.username
+            }
+        }).then(userToBeDeleted => {
+            if (!userToBeDeleted) {
+                return res.status(404).json({
+                    message: 'User could not be found',
+                })
+            }
+            // todo => delete user related data
+            User.destroy({
+                where: {
+                    username: userToBeDeleted.username
+                }
+            }).then(() => {
+                return res.status(200).json({
+                    message: 'User has been deleted.'
+                })
+            }).catch(err => {
+                return res.status(500).json({
+                    message: 'User could not be deleted.',
+                    error: err
+                })
+            })
+        }).catch(err => {
+            return res.status(500).json({
+                message: "Something went wrong deleting the user.",
+                error: err
+            })
+        })
+    } else {
+        return res.status(401).json({
+            message: 'Unauthorized. You cannot delete another user.'
+        })
+    }
+});
 
 module.exports = router;

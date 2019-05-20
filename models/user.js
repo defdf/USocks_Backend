@@ -3,26 +3,28 @@ const Sequelize = require("sequelize");
 
 const User = db.define('user', {
     username: {
-        type: Sequelize.STRING(32),
+        type: Sequelize.STRING,
         unique: true,
         primaryKey: true,
         allowNull: false
     },
     email: {
-        type: Sequelize.STRING(254),
+        type: Sequelize.STRING,
         unique: true,
         allowNull: false,
     },
+    firstName: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    lastName: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     password: {
-        type: Sequelize.STRING(128),
+        type: Sequelize.STRING,
         allowNull: false,
     },
-    /*name: {
-        type: Sequelize.STRING
-    },
-    isAdmin: {
-        type: Sequelize.BOOLEAN
-    },*/
 }, {
     freezeTableName: true,
     timestamps: false,
