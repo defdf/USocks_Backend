@@ -36,13 +36,12 @@
 - [x] Get all socks
 - [x] Get single sock
 - [x] Upload a sock  
-        Takes json body of minimum:  
-        name: string,  
-        price: string,  
-        image_url: string  
-
-        =======================    
-        Returns Sock JSON object    
+        - Takes json body of minimum:  
+          - name: string,  
+          - price: string,  
+          - image_url: string  
+  
+        - Returns Sock JSON object    
 - [ ] Get all socks of men  
 - [ ] Get all socks of women  
 - [ ] Get all socks of kids  
@@ -60,7 +59,7 @@
 #### category APIs
 - [x] Get all categories  
 - [x] Get single category    
-- [x] Create a category 
+- [x] Create a category   
         Takes JSON body of:    
         name: string  
 - [x] Delete a category  
