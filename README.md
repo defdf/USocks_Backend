@@ -5,35 +5,33 @@
 
 - [x] Get one user
 
-- [x] Login user
-        Takes JSON body of:
-        usernameOrEmail: string
-        password: string
+- [x] Login user  
+        Takes JSON body of:  
+        usernameOrEmail: string  
+        password: string  
         
         =======================
-        Returns:
-        token: string
+        Returns token: string
         
-- [x] Create User
-        Takes JSON body of minimun:
-        username: string,
-        email: string,
-        password: string
+- [x] Create User  
+        Takes JSON body of minimun:  
+        username: string,  
+        email: string,  
+        password: string  
         
-        ==========================
-        Returns User JSON object
+        ==========================  
+        Returns User JSON object  
 
--  [x] Update User
-    REQUIRES Authorization header with bearer token
-    Takes json body of:
-        updateField: <option>
-            options =
-                email: string,
-                firstName: string,
-                lastName: string
-        newValue: string
-    ==============================
-    Returns User json object
+-  [x] Update User  
+        REQUIRES Authorization header with bearer token  
+         Takes json body of:  
+                updateField: <option>  
+                        options = email: string,  
+                                  firstName: string,  
+                                  lastName: string  
+                newValue: string  
+        ==============================
+        Returns User json object
  
-- [x]  Delete a User
+- [x]  Delete a User  
     REQUIRES Authorization header with bearer token
