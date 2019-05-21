@@ -39,10 +39,10 @@
         image_url: string  
   
         Returns Sock JSON object    
-- [ ] Get all socks of men  
-- [ ] Get all socks of women  
-- [ ] Get all socks of kids  
-- [ ] Get all socks of gifts  
+- [x] Get all socks of men  
+- [x] Get all socks of women  
+- [x] Get all socks of kids  
+- [x] Get all socks of gifts  
 - [ ] Search socks  
 
 #### size APIs
