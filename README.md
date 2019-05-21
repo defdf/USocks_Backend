@@ -14,6 +14,8 @@
         Takes JSON body of minimun:    
         username: string,   
         email: string,  
+        firstName: string,  
+        lastName: string
         password: string    
         
         Returns User JSON object    
