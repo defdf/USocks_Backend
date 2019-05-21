@@ -44,6 +44,8 @@
 - [x] Get all socks of kids  
 - [x] Get all socks of gifts  
 - [ ] Search socks  
+- [ ] Modify a sock  
+- [ ] Delete a sock  
 
 #### size APIs
 - [x] Get all sizes  
