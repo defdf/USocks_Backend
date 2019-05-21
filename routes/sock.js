@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
+const Op = require('sequelize').Op;
 const Sock = require('../models').Item;
-const Category = require('../models').Category;
 
 // Get all Socks
 router.get('/', cors(), (req, res) => {
@@ -12,7 +12,8 @@ router.get('/', cors(), (req, res) => {
             'name',
             'price',
             'image_url',
-            'description'
+            'description',
+            'category'
         ]
     })
         .then(allSocks => {
@@ -38,76 +39,149 @@ router.get('/:id', cors(), (req, res) => {
         .catch(err => console.log(err));
 });
 
-// Get all Socks of Men
-router.get('/men', cors(), (req, res) => {
-    Category.findByPk('men')
-        .then(men => {
-            men.getItems()
-                .then(menSocks => {
-                    return res.status(200).json(menSocks);
-                })
+// Upload a sock
+/*
+    Takes json body of minimum:
+    name: string,
+    price: string,
+    image_url: string
+
+    ===========================
+    Returns Sock JSON object
+ */
+router.post('/', cors(), (req, res) => {
+    const data = req.body;
+    if (!data.name ||
+        !data.price ||
+        !data.image_url) {
+        return res.status(404).json({
+            message: 'Incomplete data. Please ensure all required fields are filled:' +
+                'name: string, price: int, and image_url: string.',
+            receivedData: data
         })
-        .catch(err => console.log(err));
+    }
+    Sock.findOrCreate({
+        where: {
+            [Op.or]: [
+                {image_url: data.image_url}
+            ]
+        },
+        defaults: {
+            name: data.name,
+            price: data.price,
+            image_url: data.image_url,
+            description: data.description,
+            category: data.category
+        }
+    }).then(result => {
+        let sock = result[0],
+            created = result[1];
+
+        if (!created) {
+            return res.status(400).json({
+                message: 'The item already exists.'
+            })
+        }
+        return res.status(200).json(sock);
+    }).catch(error => {
+        return res.status(500).json({
+            message: 'something went wrong creating the item.',
+            error: error
+        })
+    })
+
 });
 
-// get all Socks of women
-router.get('/women', cors(), (req, res) => {
+// Get all Socks of Men
+router.get('/category/men', cors(), (req, res) => {
     Sock.findAll({
-        include: [{
-            model: Category,
-            where: {category: 'women'}
-        }],
-        attributes: [
-            'id',
-            'name',
-            'price',
-            'image_url'
-        ]
-    })
+            where: {
+                [Op.or]: [
+                    {category: {[Op.like]: '%men,%'}},
+                    {category: {[Op.like]: '%,men,%'}},
+                    {category: {[Op.like]: '%,men%'}},
+                    {category: {[Op.eq]: 'men'}}
+                ]
+            }
+        }
+    )
+        .then(menSocks => {
+            return res.status(200).json(menSocks);
+        })
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong getting men socks.'
+            })
+        })
+});
+
+// Get all Socks of Women
+router.get('/category/women', cors(), (req, res) => {
+    Sock.findAll({
+            where: {
+                [Op.or]: [
+                    {category: {[Op.like]: '%women,%'}},
+                    {category: {[Op.like]: '%,women,%'}},
+                    {category: {[Op.like]: '%,women%'}},
+                    {category: {[Op.eq]: 'women'}}
+                ]
+            }
+        }
+    )
         .then(womenSocks => {
             return res.status(200).json(womenSocks);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong getting women socks.'
+            })
+        })
 });
 
 // Get all Socks of Kids
-router.get('/kids', cors(), (req, res) => {
+router.get('/category/kids', cors(), (req, res) => {
     Sock.findAll({
-        include: [{
-            model: Category,
-            where: {category: 'kids'}
-        }],
-        attributes: [
-            'id',
-            'name',
-            'price',
-            'image_url'
-        ]
-    })
+            where: {
+                [Op.or]: [
+                    {category: {[Op.like]: '%kids,%'}},
+                    {category: {[Op.like]: '%,kids,%'}},
+                    {category: {[Op.like]: '%,kids%'}},
+                    {category: {[Op.eq]: 'kids'}}
+                ]
+            }
+        }
+    )
         .then(kidsSocks => {
             return res.status(200).json(kidsSocks);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong getting kids socks.'
+            })
+        })
 });
 
 // Get all Socks of Gifts
-router.get('/gifts', cors(), (req, res) => {
+router.get('/category/gifts', cors(), (req, res) => {
     Sock.findAll({
-        include: [{
-            model: Category,
-            where: {category: 'gifts'}
-        }],
-        attributes: [
-            'id',
-            'name',
-            'price',
-            'image_url'
-        ]
-    })
+            where: {
+                [Op.or]: [
+                    {category: {[Op.like]: '%gifts,%'}},
+                    {category: {[Op.like]: '%,gifts,%'}},
+                    {category: {[Op.like]: '%,gifts%'}},
+                    {category: {[Op.eq]: 'gifts'}}
+                ]
+            }
+        }
+    )
         .then(giftsSocks => {
             return res.status(200).json(giftsSocks);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong getting gifts socks.'
+            })
+        })
 });
 
 // Search socks with Keywords
@@ -122,7 +196,8 @@ router.get('/search/:query', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'image_url'
+            'image_url',
+            'description'
         ]
     })
         .then(giftsSocks => {

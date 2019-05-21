@@ -13,8 +13,4 @@ const Category = db.define('category', {
     timestamps: false,
 });
 
-Category.associate = function (models) {
-    Category.belongsToMany(models.Item, {through: 'item_category', timestamps: false, foreignKey: 'category_name'});
-};
-
 module.exports = Category;

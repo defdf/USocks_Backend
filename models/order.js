@@ -8,13 +8,8 @@ const Order = db.define('order', {
             autoIncrement: true,
             allowNull: false
         },
-        /*user_username: {
-             type: Sequelize.STRING,
-             allowNull: false
-         },*/
         dateTime: {
             type: Sequelize.DATE,
-            allowNull: false
         },
         totalPrice: {
             type: Sequelize.INTEGER,

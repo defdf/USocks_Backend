@@ -107,8 +107,6 @@ router.post('/login', cors(), (req, res) => {
     Takes json body of minimum:
     username: string,
     email: string,
-    firstName: string,
-    lastName: string,
     password: string
 
     ===========================
@@ -119,48 +117,45 @@ router.post('/', cors(), (req, res) => {
 
     if (!data.username ||
         !data.email ||
-        !data.firstName ||
-        !data.lastName ||
         !data.password) {
         return res.status(404).json({
             message: 'Incomplete data. Please ensure all required fields are filled:' +
-                'username: string, email: string, firstName: string, lastName: string and password: string.',
+                'username: string, email: string, and password: string.',
             receivedData: data
         })
-    } else {
-        User.findOrCreate({
-            where: {
-                [Op.or]: [
-                    {username: data.username},
-                    {email: data.email}
-                ]
-            },
-            defaults: {
-                username: data.username,
-                email: data.email,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                password: hashPassword(data.password)
-            }
-        }).then(result => {
-            let user = result[0],
-                created = result[1];
-
-            if (!created) {
-                return res.status(400).json({
-                    message: 'Username or email already in use.'
-                })
-            }
-            let returnUser = user;
-            returnUser.password = null;
-            return res.status(200).json(returnUser);
-        }).catch(error => {
-            return res.status(500).json({
-                message: 'something went wrong.',
-                error: error
-            })
-        })
     }
+    User.findOrCreate({
+        where: {
+            [Op.or]: [
+                {username: data.username},
+                {email: data.email}
+            ]
+        },
+        defaults: {
+            username: data.username,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            password: hashPassword(data.password)
+        }
+    }).then(result => {
+        let user = result[0],
+            created = result[1];
+
+        if (!created) {
+            return res.status(400).json({
+                message: 'Username or email already in use.'
+            })
+        }
+        let returnUser = user;
+        returnUser.password = null;
+        return res.status(200).json(returnUser);
+    }).catch(error => {
+        return res.status(500).json({
+            message: 'something went wrong.',
+            error: error
+        })
+    })
 });
 
 function hashPassword(password) {
@@ -178,8 +173,8 @@ function hashPassword(password) {
                 firstName: string,
                 lastName: string
         newValue: string
-    Returns:
-        User json object
+    ===============================
+    Returns User json object
  */
 router.put('/:username', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     User.findOne({
@@ -224,7 +219,7 @@ router.put('/:username', cors(), passport.authenticate('jwt', {session: false}),
 
 // Delete a User
 /*
-    REQUESTS Authorization
+    REQUESTS Authorization header with bearer token
  */
 router.delete('/:username', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     let bearerHeader = req.get('Authorization');
