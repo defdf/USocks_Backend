@@ -13,9 +13,7 @@
 - [x] Create User    
         Takes JSON body of minimun:    
         username: string,   
-        email: string,  
-        firstName: string,  
-        lastName: string
+        email: string,
         password: string    
         
         Returns User JSON object    
