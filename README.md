@@ -1,6 +1,7 @@
 # Express API for USocks
 
-#### user APIs
+### http://35.228.53.104:3000
+#### /user APIs
 - [x] Get all users  
 - [x] Get one user  
 - [x] Login user    
@@ -29,7 +30,7 @@
 - [x]  Delete a User    
         REQUIRES Authorization header with bearer token  
 
-#### sock APIs
+#### /sock APIs 
 - [x] Get all socks
 - [x] Get single sock
 - [x] Upload a sock  
@@ -47,7 +48,7 @@
 - [ ] Modify a sock  
 - [ ] Delete a sock  
 
-#### size APIs
+#### /size APIs
 - [x] Get all sizes  
 - [x] Get single size    
 - [x] Create a size  
