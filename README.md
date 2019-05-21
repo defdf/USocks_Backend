@@ -36,7 +36,7 @@
 - [x] Upload a sock  
         Takes JSON body of minimum:  
         name: string,  
-        price: string,  
+        price: int,  
         image_url: string  
   
         Returns Sock JSON object    
