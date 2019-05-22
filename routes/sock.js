@@ -156,7 +156,8 @@ router.get('/category/kids', cors(), (req, res) => {
         })
         .catch(err => {
             return res.status(500).json({
-                message: 'Something went wrong getting kids socks.'
+                message: 'Something went wrong getting kids socks.',
+                error: err
             })
         })
 });
