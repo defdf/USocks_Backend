@@ -11,7 +11,7 @@ pids
 lib-cov
 
 # Working directory
-.idea/workspace.xml
+.idea\workspace.xml
 
 # Coverage directory used by tools like istanbul
 coverage
