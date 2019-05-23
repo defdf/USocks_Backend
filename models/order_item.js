@@ -4,11 +4,9 @@ const Sequelize = require('sequelize');
 const Order_Item = db.define('order_item', {
     qty: {
         type: Sequelize.INTEGER,
-        allowNull: false
     },
-    sumPrice: {
+    unitPrice: {
         type: Sequelize.INTEGER,
-        allowNull: false
     }
 }, {
     freezeTableName: true,

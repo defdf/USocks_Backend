@@ -11,7 +11,7 @@ const Item = db.define('item', {
         type: Sequelize.STRING(255),
         allowNull: false
     },
-    image_url: {
+    imageUrl: {
         type: Sequelize.STRING(255),
         allowNull: false
     },
@@ -24,16 +24,18 @@ const Item = db.define('item', {
     },
     category:{
         type: Sequelize.STRING
+    },
+    size_qty:{
+        type: Sequelize.JSON
     }
 }, {
     freezeTableName: true,
     timestamps: false,
-    underscored: true
+    //underscored: true
 });
 
 Item.associate = function (models) {
     Item.belongsToMany(models.Order, {through: 'order_item', foreignKey: 'item_id'});
-    Item.belongsToMany(models.Size, {through: 'item_size', foreignKey: 'item_id'});
 };
 
 module.exports = Item;

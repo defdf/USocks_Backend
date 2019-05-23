@@ -11,9 +11,10 @@ router.get('/', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'image_url',
+            'imageUrl',
             'description',
-            'category'
+            'category',
+            'size_qty'
         ]
     })
         .then(allSocks => {
@@ -29,8 +30,10 @@ router.get('/:id', cors(), (req, res) => {
             'id',
             'name',
             'price',
-            'image_url',
-            'description'
+            'imageUrl',
+            'description',
+            'category',
+            'size_qty'
         ]
     })
         .then(theSock => {
@@ -53,25 +56,22 @@ router.post('/', cors(), (req, res) => {
     const data = req.body;
     if (!data.name ||
         !data.price ||
-        !data.image_url) {
-        return res.status(404).json({
+        !data.imageUrl) {
+        return res.status(400).json({
             message: 'Incomplete data. Please ensure all required fields are filled:' +
-                'name: string, price: int, and image_url: string.',
+                'name: string, price: int, and imageUrl: string.',
             receivedData: data
         })
     }
     Sock.findOrCreate({
-        where: {
-            [Op.or]: [
-                {image_url: data.image_url}
-            ]
-        },
+        where: {imageUrl: data.imageUrl},
         defaults: {
             name: data.name,
             price: data.price,
-            image_url: data.image_url,
+            imageUrl: data.imageUrl,
             description: data.description,
-            category: data.category
+            category: data.category,
+            size_qty: data.size_qty
         }
     }).then(result => {
         let sock = result[0],
@@ -92,6 +92,11 @@ router.post('/', cors(), (req, res) => {
 
 });
 
+// todo -> Delete a sock
+
+/*========================================
+            Category Endpoints
+========================================*/
 // Get all Socks of Men
 router.get('/category/men', cors(), (req, res) => {
     Sock.findAll({
@@ -179,25 +184,31 @@ router.get('/category/gifts', cors(), (req, res) => {
         })
         .catch(err => {
             return res.status(500).json({
-                message: 'Something went wrong getting gifts socks.'
+                message: 'Something went wrong getting gifts socks.',
+                error: err
             })
         })
 });
 
+/*========================================
+            Search Endpoints
+========================================*/
 // Search socks with Keywords
 router.get('/search/:query', cors(), (req, res) => {
     Sock.findAll({
         where: [{
             name: {
-                $like: '%' + req.params.query + '%'
+                [Op.like]: '%' + req.params.query + '%'
             }
         }],
         attributes: [
             'id',
             'name',
             'price',
-            'image_url',
-            'description'
+            'imageUrl',
+            'description',
+            'category',
+            'size_qty'
         ]
     })
         .then(giftsSocks => {

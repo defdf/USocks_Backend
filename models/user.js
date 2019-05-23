@@ -26,7 +26,7 @@ const User = db.define('user', {
 }, {
     freezeTableName: true,
     timestamps: false,
-    underScored: true
+    //underScored: true
 });
 
 User.associate = function (models) {

@@ -5,6 +5,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models').User;
+const Sock = require('../models').Item;
+const Order = require('../models').Order;
 const Op = require('sequelize').Op;
 const passport = require('passport');
 const secretKey = process.env.SECRETKEY;
@@ -263,6 +265,83 @@ router.delete('/:username', cors(), passport.authenticate('jwt', {session: false
             message: 'Unauthorized. You cannot delete another user.'
         })
     }
+});
+
+/*==================================================================
+                          Order Endpoints
+==================================================================*/
+// Add an order to an user
+router.post('/:username/order', cors(), (req, res) => {
+    let data = req.body;
+    let get_order_items = data.items;
+    // todo -> input validation
+
+    User.findByPk(req.params.username)
+        .then(user => {
+            // Create Order and Order-User-Association
+            Order.create({
+                dateTime: data.dateTime,
+                totalPrice: data.totalPrice,
+                user_username: user.username,
+            })
+                .then(createdOrder => {
+                    get_order_items.forEach(itemInOrder => {
+                        // Create orderItem and Order-OrderItem-Association
+                        createdOrder.addItem(itemInOrder.id, {
+                            through: {
+                                qty: itemInOrder.qty,
+                                unitPrice: itemInOrder.unitPrice
+                            }
+                        });
+                    });
+                });
+        })
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong finding the user.',
+                error: err
+            });
+        })
+});
+
+// get all orders of user
+router.get('/:username/order', cors(), (req, res) => {
+    Order.findAll({
+        where: {user_username: req.params.username}
+    })
+        .then(orders => {
+            return res.status(200).json(orders);
+        })
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong finding orders.',
+                error: err
+            })
+        })
+});
+
+// get one order of user
+router.get('/:username/order/:orderId', cors(), (req, res) => {
+    Order.findAll({
+        where: {
+            [Op.and]: [
+                {user_username: req.params.username},
+                {id: req.params.orderId}]
+        },
+        include: [{
+            model: Sock
+        }]
+    })
+        .then(orders => {
+            return res.status(200).json(orders);
+        })
+
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong finding the order.',
+                error: err
+            })
+        })
 });
 
 module.exports = router;
