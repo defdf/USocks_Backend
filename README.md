@@ -1,16 +1,16 @@
 # Express API for USocks
 
 ### http://35.228.53.104:3000
-#### /user APIs
-- [x] Get all users  
-- [x] Get one user  
-- [x] Login user    
+#### User APIs
+- [x] /user -> Get all users  
+- [x] /user/:username -> Get one user  
+- [x] /user/login -> Login user    
         Takes JSON body of:    
         usernameOrEmail: string    
         password: string  
         
         Returns token: string
-- [x] Create User    
+- [x] /user -> Create User    
         Takes JSON body of minimun:    
         username: string,   
         email: string,
@@ -20,7 +20,7 @@
         lastName: string,
         
         Returns User JSON object    
-- [x] Update User        
+- [x] /user -> Update User        
         REQUIRES Authorization header with bearer token      
         Takes JSON body of:      
         updateField: <option>    
@@ -30,43 +30,24 @@
           newValue: string   
           
         Returns User JSON object     
-- [x]  Delete a User    
+- [x]  /user/:username -> Delete a User    
         REQUIRES Authorization header with bearer token  
 
-#### /sock APIs 
-- [x] Get all socks
-- [x] Get single sock
-- [x] Upload a sock  
+#### Sock APIs 
+- [x] /sock -> Get all socks
+- [x] /sock/:id -> Get single sock
+- [x] /sock -> Upload a sock  
         Takes JSON body of minimum:  
         name: string,  
         price: int,  
         image_url: string  
   
         Returns Sock JSON object    
-- [x] Get all socks of men  
-- [x] Get all socks of women  
-- [x] Get all socks of kids  
-- [x] Get all socks of gifts  
-- [ ] Search socks  
-- [ ] Modify a sock  
 - [ ] Delete a sock  
-
-#### /size APIs
-- [x] Get all sizes  
-- [x] Get single size    
-- [x] Create a size  
-        Takes JSON body of:  
-        name: string
-        
-        Returns name: string
-- [x] Delete a size  
-
-#### category APIs
-- [x] Get all categories  
-- [x] Get single category    
-- [x] Create a category   
-        Takes JSON body of:    
-        name: string  
-        
-        Returns name: string
-- [x] Delete a category  
+###### Search API
+- [x] /sock/search/:keywords -> Search socks  
+###### Category APIS
+- [x] sock/category/men -> Get all socks of men  
+- [x] sock/category/women -> Get all socks of women  
+- [x] sock/category/kids -> Get all socks of kids  
+- [x] sock/category/gifts Get all socks of gifts  
