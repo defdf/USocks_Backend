@@ -20,7 +20,7 @@
         lastName: string,
         
         Returns User JSON object    
-- [x] /user -> Update User        
+- [x] /user/:username -> Update a User        
         REQUIRES Authorization header with bearer token      
         Takes JSON body of:      
         updateField: <option>    
@@ -50,4 +50,4 @@
 - [x] sock/category/men -> Get all socks of men  
 - [x] sock/category/women -> Get all socks of women  
 - [x] sock/category/kids -> Get all socks of kids  
-- [x] sock/category/gifts Get all socks of gifts  
+- [x] sock/category/gifts -> Get all socks of gifts  
