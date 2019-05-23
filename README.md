@@ -47,8 +47,8 @@
 - [x]  Create an order for an user  
         /user/:username/order  
         Takes JSON body:  
-        dateTime: DateTime,
-        totalPrice: int,
+        dateTime: DateTime,  
+        totalPrice: int,  
         items:[  
                 id: int,  
                 qty: int,  
