@@ -1,7 +1,7 @@
 # Express API for USocks
 
 ### http://35.228.53.104:3000
-#### User APIs
+### User APIs
 - [x] Get all users  
       /user  
 - [x] Get one user  
@@ -39,7 +39,7 @@
         /user/:username  
         REQUIRES Authorization header with bearer token  
 
-#### Order APIs
+### Order APIs
 - [x]  Get all orders of an user  
         /user/:username/order  
 - [x]  Get one order of an user  
@@ -57,7 +57,7 @@
         
         Returns Order JSON object  
 
-#### Sock APIs 
+### Sock APIs 
 - [x] Get all socks  
         /sock  
 - [x] Get single sock  
@@ -71,10 +71,10 @@
   
         Returns Sock JSON object    
 - [ ] Delete a sock  
-###### Search API
+### Search API
 - [x] Search socks  
         /sock/search/:keywords  
-###### Category APIS
+### Category APIS
 - [x] Get all socks of men  
         sock/category/men  
 - [x] Get all socks of women  
