@@ -14,7 +14,10 @@
         Takes JSON body of minimun:    
         username: string,   
         email: string,
-        password: string    
+        password: string
+        Optional:
+        firstName: string,
+        lastName: string,
         
         Returns User JSON object    
 - [x] Update User        
