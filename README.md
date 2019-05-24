@@ -50,9 +50,9 @@
         dateTime: DateTime,  
         totalPrice: int,  
         items:[  
-                id: int,  
+                {id: int,  
                 qty: int,  
-                unitPrice: int  
+                unitPrice: int}  
         ]  
         
         Returns Order JSON object  
