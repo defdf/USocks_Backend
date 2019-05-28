@@ -70,7 +70,7 @@
         image_url: string  
   
         Returns Sock JSON object    
-- [ ] Delete a sock  
+- [x] Delete a sock  
 ### Search API
 - [x] Search socks  
         /sock/search/:keywords  
