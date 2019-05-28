@@ -39,7 +39,13 @@
         /user/:username  
         REQUIRES Authorization header with bearer token  
 
-### Order APIs
+### Order APIs  
+- [x]  Get all orders  
+        /order  
+- [x]  Get one order  
+        /order/:id  
+- [x]  Delete an order  
+        /order/:id  
 - [x]  Get all orders of an user  
         /user/:username/order  
 - [x]  Get one order of an user  
