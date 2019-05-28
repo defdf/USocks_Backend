@@ -67,7 +67,11 @@
         Takes JSON body of minimum:  
         name: string,  
         price: int,  
-        image_url: string  
+        imageUrl: string  
+        OPtions:  
+        description: string,  
+        category: string,  
+        size_qty: JSON  
   
         Returns Sock JSON object    
 - [x] Delete a sock  
