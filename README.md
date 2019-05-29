@@ -69,7 +69,7 @@
         /sock  
 - [x] Get single sock  
         /sock/:id  
-- [x] Get three top sode socks  
+- [x] Get three top sold socks  
         /sock/top/picks  
 - [x] Upload a sock  
         /sock  
