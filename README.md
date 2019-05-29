@@ -57,6 +57,7 @@
         totalPrice: int,  
         items:[  
                 {id: int,  
+                size: string,  
                 qty: int,  
                 unitPrice: int}  
         ]  
