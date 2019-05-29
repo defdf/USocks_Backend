@@ -12,7 +12,7 @@ const passport = require('passport');
 const secretKey = process.env.SECRETKEY;
 
 // Get all users
-router.get('/', cors(), (req, res) => {
+router.get('/', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     User.findAll({
         attributes: [
             'username',
@@ -28,7 +28,7 @@ router.get('/', cors(), (req, res) => {
 });
 
 // Get single user
-router.get('/:username', cors(), (req, res) => {
+router.get('/:username', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     User.findOne({
         where: {username: req.params.username},
         attributes: [
@@ -271,7 +271,8 @@ router.delete('/:username', cors(), passport.authenticate('jwt', {session: false
                           Order Endpoints
 ==================================================================*/
 // Add an order to an user
-router.post('/:username/order', cors(), (req, res) => {
+// todo -> Verify current user is requested user
+router.post('/:username/order', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     let data = req.body;
     let get_order_items = data.items;
     // todo -> input validation
@@ -286,14 +287,44 @@ router.post('/:username/order', cors(), (req, res) => {
             })
                 .then(createdOrder => {
                     get_order_items.forEach(itemInOrder => {
-                        // Create orderItem and Order-OrderItem-Association
-                        createdOrder.addItem(itemInOrder.id, {
-                            through: {
-                                qty: itemInOrder.qty,
-                                unitPrice: itemInOrder.unitPrice
+                        Sock.findOne({
+                            where: {id: itemInOrder.id}
+                        }).then(foundSock => {
+                            if (!foundSock) {
+                                return res.status(404).json({
+                                    message: 'Sock item not found.'
+                                })
                             }
-                        });
+                            // Create orderItem and Order-OrderItem-Association
+                            createdOrder.addItem(itemInOrder.id, {
+                                through: {
+                                    size: itemInOrder.size,
+                                    qty: itemInOrder.qty,
+                                    unitPrice: itemInOrder.unitPrice
+                                }
+                            }).then(() => {
+                                // Update stock of the sock item
+                                let tobeUpdated_size_qty_list = foundSock.size_qty;
+                                tobeUpdated_size_qty_list.keys.forEach(key => {
+                                    if (key === itemInOrder.size) {
+                                        tobeUpdated_size_qty_list.key = tobeUpdated_size_qty_list.key - itemInOrder.qty;
+                                    }
+                                });
+
+                                let newValue = {["qty_size"]: tobeUpdated_size_qty_list};
+                                foundSock.update(newValue)
+                                    .catch(err => {
+                                        return res.status(500).json({
+                                            message: 'Something went wrong updating quantity of a sock item.',
+                                            error: err
+                                        })
+                                    })
+                            });
+                        })
+
                     });
+
+                    return res.status(200).json(createdOrder);
                 });
         })
         .catch(err => {
@@ -305,7 +336,7 @@ router.post('/:username/order', cors(), (req, res) => {
 });
 
 // get all orders of user
-router.get('/:username/order', cors(), (req, res) => {
+router.get('/:username/order', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     Order.findAll({
         where: {user_username: req.params.username}
     })
@@ -321,7 +352,7 @@ router.get('/:username/order', cors(), (req, res) => {
 });
 
 // get one order of user
-router.get('/:username/order/:orderId', cors(), (req, res) => {
+router.get('/:username/order/:orderId', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     Order.findAll({
         where: {
             [Op.and]: [
@@ -341,6 +372,60 @@ router.get('/:username/order/:orderId', cors(), (req, res) => {
                 message: 'Something went wrong finding the order.',
                 error: err
             })
+        })
+});
+
+router.post('/:username/order', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
+    let data = req.body;
+    let get_order_items = data.items;
+    // todo -> input validation
+
+    User.findByPk(req.params.username)
+        .then(user => {
+            // Create Order and Order-User-Association
+            Order.create({
+                dateTime: data.dateTime,
+                totalPrice: data.totalPrice,
+                user_username: user.username,
+            })
+                .then(createdOrder => {
+                    get_order_items.forEach(itemInOrder => {
+                        Sock.findOne({
+                            where: {id: itemInOrder.id}
+                        }).then(foundSock => {
+                            if (!foundSock) {
+                                return res.status(404).json({
+                                    message: 'Sock item not found.'
+                                })
+                            }
+                            // Create orderItem and Order-OrderItem-Association
+                            createdOrder.addItem(itemInOrder.id, {
+                                through: {
+                                    qty: itemInOrder.qty,
+                                    unitPrice: itemInOrder.unitPrice
+                                }
+                            }).then(()=>{
+                                // Update stock of the sock item
+                                let newQty = foundSock.qty - itemInOrder.qty;
+                                let newValue={["qty"]:newQty};
+                                foundSock.update(newValue)
+                                    .catch(err=>{
+                                        return res.status(500).json({
+                                            message: 'Something went wrong updating quantity of a sock item.',
+                                            error: err
+                                        })
+                                    })
+                            });
+                        })
+                    });
+                    return res.status(200).json(createdOrder);
+                });
+        })
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Something went wrong finding the user.',
+                error: err
+            });
         })
 });
 

@@ -14,9 +14,11 @@ app.use(logger('dev'));
 
 const userRouter = require('./routes/user');
 const sockRouter = require('./routes/sock');
+const orderRouter= require('./routes/order');
 
 app.use('/user', userRouter);
 app.use('/sock', sockRouter);
+app.use('/order', orderRouter);
 
 db.sync({force: false})
     .then(() => {

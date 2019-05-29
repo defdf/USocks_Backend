@@ -3,6 +3,9 @@ const router = express.Router();
 const cors = require('cors');
 const Op = require('sequelize').Op;
 const Sock = require('../models').Item;
+const OrderItem = require('../models').Order_Item;
+const passport = require('passport');
+const Sequelize = require("sequelize");
 
 // Get all Socks
 router.get('/', cors(), (req, res) => {
@@ -42,6 +45,26 @@ router.get('/:id', cors(), (req, res) => {
         .catch(err => console.log(err));
 });
 
+// Get most sold socks
+router.get('/top/picks', cors(), (req, res) => {
+    OrderItem.findAll({
+        attributes:['item_id',[Sequelize.fn('sum', Sequelize.col('qty')), 'totalQty']],
+        include:[{model: Sock}],
+        group: ['order_item.item_id'],
+        raw: true,
+        order: Sequelize.literal('totalQty DESC'),
+        limit: 3
+        }
+    ).then(socks=>{
+        return res.status(200).json(socks);
+    }).catch(err=>{
+        return res.status(500).json({
+            message: 'Something went wrong getting top sold socks.',
+            error: err
+        })
+    })
+});
+
 // Upload a sock
 /*
     Takes json body of minimum:
@@ -52,7 +75,7 @@ router.get('/:id', cors(), (req, res) => {
     ===========================
     Returns Sock JSON object
  */
-router.post('/', cors(), (req, res) => {
+router.post('/', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
     const data = req.body;
     if (!data.name ||
         !data.price ||
@@ -92,7 +115,35 @@ router.post('/', cors(), (req, res) => {
 
 });
 
-// todo -> Delete a sock
+// Delete a sock
+/*
+    REQUESTS Authorization header with bearer token
+ */
+router.delete('/:id', cors(), passport.authenticate('jwt', {session: false}), (req, res) => {
+    Sock.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(sockToBeDeleted => {
+        if (!sockToBeDeleted) {
+            return res.status(404).json({
+                message: 'Sock could not be found',
+            })
+        }
+        sockToBeDeleted.destroy(
+        ).then(() => {
+            return res.status(200).json({
+                message: 'Sock has been deleted.'
+            })
+        })
+    })
+        .catch(err => {
+            return res.status(500).json({
+                message: 'Sock could not be deleted.',
+                error: err
+            })
+        })
+});
 
 /*========================================
             Category Endpoints

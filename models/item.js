@@ -22,16 +22,15 @@ const Item = db.define('item', {
     description: {
         type: Sequelize.STRING(500)
     },
-    category:{
+    category: {
         type: Sequelize.STRING
     },
-    size_qty:{
+    size_qty: {
         type: Sequelize.JSON
     }
 }, {
     freezeTableName: true,
-    timestamps: false,
-    //underscored: true
+    timestamps: false
 });
 
 Item.associate = function (models) {

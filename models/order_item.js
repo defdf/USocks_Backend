@@ -2,11 +2,14 @@ const db = require('../config/database');
 const Sequelize = require('sequelize');
 
 const Order_Item = db.define('order_item', {
+    size:{
+        type: Sequelize.STRING
+    },
     qty: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
     },
     unitPrice: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
     }
 }, {
     freezeTableName: true,

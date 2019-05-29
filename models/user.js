@@ -22,11 +22,10 @@ const User = db.define('user', {
     password: {
         type: Sequelize.STRING,
         allowNull: false,
-    },
+    }
 }, {
     freezeTableName: true,
-    timestamps: false,
-    //underScored: true
+    timestamps: false
 });
 
 User.associate = function (models) {

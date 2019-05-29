@@ -17,8 +17,7 @@ const Order = db.define('order', {
         }
     }, {
         freezeTableName: true,
-        timestamps: false,
-        //underscored: true
+        timestamps: false
     }
 );
 
