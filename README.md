@@ -69,6 +69,8 @@
         /sock  
 - [x] Get single sock  
         /sock/:id  
+- [x] Get three top sode socks  
+        /sock/top/picks  
 - [x] Upload a sock  
         /sock  
         Takes JSON body of minimum:  
