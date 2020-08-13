@@ -1,4 +1,4 @@
-# Express API for USocks
+# This application is the API for a E-commerce store, namely USocks.
 
 ### http://35.228.53.104:3000
 ### User APIs
