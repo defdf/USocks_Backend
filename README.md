@@ -1,4 +1,4 @@
-# This application is the API for a E-commerce store, namely USocks.
+#  API for a E-commerce store USocks.
 ###### Application is implemeted with Express, main functionalities of this application including: 
 - User APIs, with authenticationa and authorization middleware.
 - Product and search APIs.
