@@ -1,6 +1,9 @@
 # This application is the API for a E-commerce store, namely USocks.
+###### Application is implemeted with Express, main functionalities of this application including: 
+- User APIs, with authenticationa and authorization middleware.
+- Product and search APIs.
+- Order APIs.
 
-### http://35.228.53.104:3000
 ### User APIs
 - [x] Get all users  
       /user  
@@ -19,12 +22,11 @@
         username: string,   
         email: string,  
         password: string,  
-        Optional:  
-        firstName: string,  
-        lastName: string,  
+        firstName: string(optional),  
+        lastName: string(optional),  
         
-        Returns User JSON object    
-- [x] Update a User  
+        Returns user: JSON object    
+- [x] Update user  
         /user/:username  
         REQUIRES Authorization header with bearer token      
         Takes JSON body of:      
@@ -55,12 +57,7 @@
         Takes JSON body:  
         dateTime: DateTime,  
         totalPrice: int,  
-        items:[  
-                {id: int,  
-                size: string,  
-                qty: int,  
-                unitPrice: int}  
-        ]  
+        items:[{id: int, size: string, qty: int, unitPrice: int}]  
         
         Returns Order JSON object  
 
